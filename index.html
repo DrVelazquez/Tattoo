@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora de Costo Tattoo</title>
+  <style>
+    /* Reset y estilos generales */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      color: #333;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    /* Pestañas */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+    .tabs button {
+      background: none;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      color: #555;
+    }
+    .tabs button.active {
+      border-color: #3b82f6;
+      color: #3b82f6;
+      font-weight: bold;
+    }
+    /* Secciones */
+    .section {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .section.active {
+      display: block;
+    }
+    /* Formularios e insumos */
+    form { 
+      margin-bottom: 20px; 
+      transition: border 0.3s ease;
+    }
+    form label {
+      display: block;
+      margin: 10px 0 2px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    form input, form button {
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form button {
+      background: #3b82f6;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s;
+    }
+    form button:hover {
+      background: #2563eb;
+    }
+    .insumo-list { 
+      margin-top: 10px; 
+    }
+    .insumo-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      background: #f1f5f9;
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    /* Estilo especial para variables (no se pueden eliminar ni cambiar su nombre) */
+    .insumo-item.special-insumo {
+      background: #fff3e0;
+      border: 2px dashed #ffa500;
+    }
+    .insumo-item span {
+      flex: 1;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    .insumo-item button {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      margin-left: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.3s;
+    }
+    .insumo-item button:hover {
+      background: #2563eb;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+    .button-row button,
+    .button-row input[type="file"] {
+      width: auto;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background: #3b82f6;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .button-row button:hover,
+    .button-row input[type="file"]:hover {
+      background: #2563eb;
+    }
+    /* Responsividad para botones exportar/importar */
+    @media (max-width: 600px) {
+      .button-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .button-row button,
+      .button-row input[type="file"] {
+        width: 100%;
+      }
+    }
+    /* Sección costo mínimo */
+    .min-cost-section {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .min-cost-section input {
+      width: auto;
+      display: inline-block;
+      margin-left: 8px;
+      padding: 5px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    /* Calculadora */
+    .calc-group { 
+      margin-bottom: 15px; 
+    }
+    .calc-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .calc-group input {
+      padding: 10px;
+      font-size: 14px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .detalle {
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
+    }
+    .resultado {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border: 2px solid #3b82f6;
+      border-radius: 8px;
+      background: #e0f2fe;
+    }
+    .resultado p {
+      font-size: 22px;
+      margin: 10px 0;
+      font-weight: bold;
+      color: #1e40af;
+    }
+    .nota {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+    }
+    /* Efecto de resaltado para edición */
+    .highlight {
+      border: 2px solid red;
+      animation: glow 1s ease-out;
+    }
+    @keyframes glow {
+      0% { border-color: red; }
+      100% { border-color: #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora para Tatuajes</h1>
+  <div style="text-align: center;">
+    <p>By: <a href="https://instagram.com/dr.velazquez">@dr.velazquez</a></p>
+  </div>
+  
+  <!-- Pestañas -->
+  <div class="tabs">
+    <button id="tab-insumos">🛠️ Insumos</button>
+    <button id="tab-calculadora" class="active">💶 Calculadora</button>
+  </div>
+
+  <!-- Sección Calculadora (Página Inicial) -->
+  <div id="section-calculadora" class="section active">
+    <h2>Calculadora de Tatuaje</h2>
+    <!-- Variables: cantidades y valor por hora (con iconos) -->
+    <div class="calc-group">
+      <label for="tetinasCant">🔘 Tetinas - Cantidad usada:</label>
+      <input type="number" id="tetinasCant" value="1" min="0">
+    </div>
+    <div class="calc-group">
+      <label for="tintaCant">🖌️ Tinta - Dosis usada:</label>
+      <input type="number" id="tintaCant" value="1" min="0">
+    </div>
+    <div class="calc-group">
+      <label for="agujaCant">💉 Agujas - Cantidad usada:</label>
+      <input type="number" id="agujaCant" value="1" min="0">
+    </div>
+    <div class="calc-group">
+      <label for="guantesCant">🧤 Guantes nitrilo - Cantidad usada:</label>
+      <input type="number" id="guantesCant" value="1" min="0">
+    </div>
+    <div class="calc-group">
+      <label for="valorHora">⏱️ Valor por hora ($):</label>
+      <input type="number" id="valorHora" value="6.00" step="0.01" min="0">
+    </div>
+    <div class="calc-group">
+      <label for="minutos">⌛ Minutos trabajados:</label>
+      <input type="number" id="minutos" value="0" min="0">
+    </div>
+    <!-- Detalle del costo fijo en pequeño -->
+    <div class="detalle" id="detalleCostos"></div>
+    <button onclick="calcular()" style="width:100%; padding:12px; background:#3b82f6; border:none; border-radius:4px; color:#fff; font-size:16px; cursor:pointer;">
+      Calcular
+    </button>
+    <div class="resultado" id="resultado">
+      <p>Costo final: $0.00</p>
+    </div>
+    <p class="nota">* El costo mínimo a cobrar es editable en la sección de Insumos.</p>
+  </div>
+
+  <!-- Sección Insumos -->
+  <div id="section-insumos" class="section">
+    <h2>Costos de Insumos</h2>
+    <form id="form-insumo">
+      <label for="nombre">Nombre del insumo:</label>
+      <input type="text" id="nombre" placeholder="Nombre del insumo" required>
+      <label for="precioTotal">Precio total ($):</label>
+      <input type="number" step="0.01" id="precioTotal" placeholder="Precio total ($)" required>
+      <label for="cantidad">Cantidad de tattoos que permite:</label>
+      <input type="number" id="cantidad" placeholder="Cantidad de tattoos que permite" required>
+      <button type="submit">Guardar Cambios</button>
+    </form>
+    <div class="insumo-list" id="listaInsumos">
+      <!-- Se llenan dinámicamente -->
+    </div>
+    <div class="button-row">
+      <button onclick="exportar()">📤 Exportar</button>
+      <input type="file" id="importarArchivo" onchange="importar(event)">
+    </div>
+    <!-- Costo mínimo editable -->
+    <div class="min-cost-section">
+      <label for="minCosto">Costo mínimo a cobrar ($):</label>
+      <input type="number" id="minCosto" value="15" step="0.01">
+    </div>
+    <p class="nota">* Para editar un insumo, haz clic en "Editar".</p>
+    <p style="text-align: center; font-size: 14px; color: #555;" id="costoFijoInsumos">
+      Costo Fijo para Tatuaje: $0.00
+    </p>
+  </div>
+
+  <script>
+    /* ---------- Variables Globales ---------- */
+    const storageKey = 'insumosTattoo';
+    const minCostoKey = 'minCosto';
+    const valorHoraKey = 'valorHora'; // nueva clave para Valor por hora
+    // Variables especiales: no se pueden eliminar ni editar el nombre.
+    const specialVars = ["Guantes nitrilo", "Tinta", "Tetinas", "Agujas"];
+
+    /* ---------- Datos Iniciales de Insumos ---------- */
+    // Se eliminó "Precio Hora" (configurado en la Calculadora) y se ajustaron los nombres especiales.
+    const datosIniciales = [
+      { nombre: "Agujas", precioTotal: 30.00, cantidad: 20 },
+      { nombre: "Alcohol en gel", precioTotal: 3.00, cantidad: 30 },
+      { nombre: "Bajalenguas (x100u)", precioTotal: 3.00, cantidad: 100 },
+      { nombre: "Bolsitas cubregrip (x100)", precioTotal: 7.50, cantidad: 100 },
+      { nombre: "Botella aplicadora", precioTotal: 2.00, cantidad: 100 },
+      { nombre: "Desinfectante superficies", precioTotal: 5.00, cantidad: 5 },
+      { nombre: "Gillette (5 u)", precioTotal: 2.50, cantidad: 5 },
+      { nombre: "Termocopiadora", precioTotal: 90.00, cantidad: 200 },
+      { nombre: "Guantes nitrilo", precioTotal: 6.00, cantidad: 100 },
+      { nombre: "Jabón verde", precioTotal: 5.00, cantidad: 10 },
+      { nombre: "Papel film 15m", precioTotal: 3.00, cantidad: 5 },
+      { nombre: "Papel Hectografico (1 hoja)", precioTotal: 2.00, cantidad: 1 },
+      { nombre: "Parche Epidermico (3x20cm)", precioTotal: 1.80, cantidad: 9 },
+      { nombre: "Rollo grip", precioTotal: 1.00, cantidad: 3 },
+      { nombre: "Servilletas (3rollos)", precioTotal: 3.00, cantidad: 8 },
+      { nombre: "Stencil Stuff", precioTotal: 20.00, cantidad: 50 },
+      { nombre: "Tetinas", precioTotal: 2.00, cantidad: 100 },
+      { nombre: "Tinta", precioTotal: 15.00, cantidad: 20 },
+      { nombre: "Vaselina", precioTotal: 2.00, cantidad: 50 }
+    ];
+
+    // Calcula costo por tattoo: precioTotal / cantidad (si cantidad > 0)
+    function calcularCostoTattoo(precio, cant) {
+      return cant > 0 ? precio / cant : 0;
+    }
+
+    /* ---------- Funciones de Almacenamiento ---------- */
+    function obtenerInsumos() {
+      const datos = localStorage.getItem(storageKey);
+      if (!datos) {
+        const inicializados = datosIniciales.map(insumo => ({
+          ...insumo,
+          costoTattoo: calcularCostoTattoo(insumo.precioTotal, insumo.cantidad)
+        }));
+        localStorage.setItem(storageKey, JSON.stringify(inicializados));
+        return inicializados;
+      }
+      return JSON.parse(datos);
+    }
+
+    function guardarInsumos(lista) {
+      const actualizados = lista.map(item => ({
+        ...item,
+        costoTattoo: calcularCostoTattoo(item.precioTotal, item.cantidad)
+      }));
+      localStorage.setItem(storageKey, JSON.stringify(actualizados));
+    }
+
+    function obtenerMinCosto() {
+      const min = localStorage.getItem(minCostoKey);
+      return min !== null ? parseFloat(min) : 15;
+    }
+
+    function guardarMinCosto(valor) {
+      localStorage.setItem(minCostoKey, valor);
+    }
+
+    // Función para obtener el valor guardado de Valor por hora
+    function obtenerValorHora() {
+      const vh = localStorage.getItem(valorHoraKey);
+      return vh !== null ? parseFloat(vh) : 6.00;
+    }
+
+    // Función para guardar el valor de Valor por hora
+    function guardarValorHora(valor) {
+      localStorage.setItem(valorHoraKey, valor);
+    }
+
+    /* ---------- Renderizado de Insumos ---------- */
+    function renderInsumos() {
+      const contenedor = document.getElementById('listaInsumos');
+      let lista = obtenerInsumos();
+      contenedor.innerHTML = '';
+
+      // Se agrupan las variables especiales en el orden definido.
+      const especiales = [];
+      specialVars.forEach(specialName => {
+        const item = lista.find(insumo => insumo.nombre === specialName);
+        if (item) especiales.push(item);
+      });
+
+      // Se recogen los insumos restantes en orden alfabético.
+      const restantes = lista.filter(item => !specialVars.includes(item.nombre))
+                              .sort((a, b) => a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase()));
+      // Se forma la lista final.
+      const listaFinal = [...especiales, ...restantes];
+
+      // Importante: se utiliza el índice original de la lista para conservar la referencia en edición/eliminación.
+      listaFinal.forEach(item => {
+        // Se obtiene el índice real en la lista original.
+        const indexOriginal = lista.findIndex(insumo => insumo.nombre === item.nombre && 
+          insumo.precioTotal === item.precioTotal && insumo.cantidad === item.cantidad
+        );
+        const div = document.createElement('div');
+        div.className = 'insumo-item' + (specialVars.includes(item.nombre) ? ' special-insumo' : '');
+        let botones = `<button onclick="editar(${indexOriginal})">Editar</button>`;
+        // No se muestra botón "Borrar" para variables especiales.
+        if (!specialVars.includes(item.nombre)) {
+          botones += `<button onclick="eliminar(${indexOriginal})">Borrar</button>`;
+        }
+        div.innerHTML = `
+          <span><strong>${item.nombre}</strong> - $${item.precioTotal.toFixed(2)} | Cantidad: ${item.cantidad} | Costo/tattoo: $${item.costoTattoo.toFixed(2)}</span>
+          ${botones}
+        `;
+        contenedor.appendChild(div);
+      });
+      actualizarCostoFijo();
+    }
+
+    function actualizarCostoFijo() {
+      const lista = obtenerInsumos();
+      let fijo = 0;
+      // Se excluyen del costo fijo las variables especiales.
+      lista.forEach(item => {
+        if (!specialVars.includes(item.nombre)) {
+          fijo += item.costoTattoo;
+        }
+      });
+      document.getElementById('costoFijoInsumos').innerText = 'Costo Fijo para Tatuaje: $' + fijo.toFixed(2);
+      document.getElementById('detalleCostos').innerText = `Costo Fijo: $${fijo.toFixed(2)}`;
+      return fijo;
+    }
+
+    /* ---------- Formularios ---------- */
+    function editar(index) {
+      const lista = obtenerInsumos();
+      const insumo = lista[index];
+      const nombreInput = document.getElementById('nombre');
+      nombreInput.value = insumo.nombre;
+      // Si es variable especial, se deshabilita la edición del nombre.
+      if (specialVars.includes(insumo.nombre)) {
+        nombreInput.disabled = true;
+      } else {
+        nombreInput.disabled = false;
+      }
+      document.getElementById('precioTotal').value = insumo.precioTotal;
+      document.getElementById('cantidad').value = insumo.cantidad;
+      document.getElementById('form-insumo').setAttribute('data-index', index);
+      document.getElementById('form-insumo').scrollIntoView({ behavior: 'smooth' });
+      const form = document.getElementById('form-insumo');
+      form.classList.add('highlight');
+      setTimeout(() => form.classList.remove('highlight'), 1000);
+    }
+
+    function eliminar(index) {
+      let lista = obtenerInsumos();
+      // Se previene eliminar variables especiales.
+      if (specialVars.includes(lista[index].nombre)) return;
+      lista.splice(index, 1);
+      guardarInsumos(lista);
+      renderInsumos();
+    }
+
+    document.getElementById('form-insumo').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombreInput = document.getElementById('nombre');
+      const nombre = nombreInput.value.trim();
+      const precioTotal = parseFloat(document.getElementById('precioTotal').value);
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+      let lista = obtenerInsumos();
+      const idx = this.getAttribute('data-index');
+      if (idx !== null) {
+        // Si es variable especial, se mantiene el nombre sin cambios.
+        if (specialVars.includes(lista[idx].nombre)) {
+          lista[idx] = { nombre: lista[idx].nombre, precioTotal, cantidad };
+        } else {
+          lista[idx] = { nombre, precioTotal, cantidad };
+        }
+        this.removeAttribute('data-index');
+      } else {
+        // Si ya existe un insumo con ese nombre, se actualiza.
+        const pos = lista.findIndex(item => item.nombre.toLowerCase() === nombre.toLowerCase());
+        if (pos >= 0) {
+          if (specialVars.includes(lista[pos].nombre)) {
+            lista[pos] = { nombre: lista[pos].nombre, precioTotal, cantidad };
+          } else {
+            lista[pos] = { nombre, precioTotal, cantidad };
+          }
+        } else {
+          lista.push({ nombre, precioTotal, cantidad });
+        }
+      }
+      // Se vuelve a habilitar el input nombre tras la edición.
+      nombreInput.disabled = false;
+      guardarInsumos(lista);
+      this.reset();
+      renderInsumos();
+    });
+
+    document.getElementById('minCosto').addEventListener('change', function() {
+      const valor = parseFloat(this.value) || 15;
+      guardarMinCosto(valor);
+    });
+
+    function renderMinCosto() {
+      document.getElementById('minCosto').value = obtenerMinCosto();
+    }
+
+    /* ---------- Exportar/Importar ---------- */
+    function exportar() {
+      const data = localStorage.getItem(storageKey);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'insumosTattoo.json';
+      a.click();
+    }
+
+    function importar(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const datos = JSON.parse(ev.target.result);
+          guardarInsumos(datos);
+          renderInsumos();
+        } catch (err) {
+          alert('Error al importar datos.');
+        }
+      }
+      reader.readAsText(file);
+    }
+
+    /* ---------- Calculadora ---------- */
+    // Obtiene el costo unitario de un insumo por su nombre.
+    function obtenerCosto(nombre) {
+      const lista = obtenerInsumos();
+      const insumo = lista.find(item => item.nombre === nombre);
+      return insumo ? insumo.costoTattoo : 0;
+    }
+
+    function calcular() {
+      // Guarda el valor actual de "Valor por hora" en localStorage.
+      const valorHoraInput = document.getElementById('valorHora');
+      const valorHora = Number(valorHoraInput.value) || 0;
+      guardarValorHora(valorHora);
+      
+      const fijo = actualizarCostoFijo();
+      // Variables (usando los nombres actualizados)
+      const costoTetinas = obtenerCosto('Tetinas');
+      const costoTinta  = obtenerCosto('Tinta');
+      const costoAguja  = obtenerCosto('Agujas');
+      const costoGuante = obtenerCosto('Guantes nitrilo');
+
+      const tetinasCant = Number(document.getElementById('tetinasCant').value) || 0;
+      const tintaCant   = Number(document.getElementById('tintaCant').value) || 0;
+      const agujaCant   = Number(document.getElementById('agujaCant').value) || 0;
+      const guantesCant = Number(document.getElementById('guantesCant').value) || 0;
+      const minutos     = Number(document.getElementById('minutos').value) || 0;
+
+      const costoVarTetinas = tetinasCant * costoTetinas;
+      const costoVarTinta   = tintaCant * costoTinta;
+      const costoVarAgujas  = agujaCant * costoAguja;
+      const costoVarGuantes = guantesCant * costoGuante;
+      const costoVariables = costoVarTetinas + costoVarTinta + costoVarAgujas + costoVarGuantes;
+      const costoTiempo = valorHora * (minutos / 60);
+
+      let costoTotal = fijo + costoVariables + costoTiempo;
+      const minC = obtenerMinCosto();
+      if (costoTotal < minC) costoTotal = minC;
+
+      document.getElementById('resultado').innerHTML = `<p>Costo final: $${costoTotal.toFixed(2)}</p>`;
+    }
+
+    /* ---------- Gestión de Pestañas ---------- */
+    function setActiveTab(tab) {
+      const tabIns = document.getElementById('tab-insumos');
+      const tabCalc = document.getElementById('tab-calculadora');
+      const secIns = document.getElementById('section-insumos');
+      const secCalc = document.getElementById('section-calculadora');
+      if (tab === 'insumos') {
+        tabIns.classList.add('active');
+        tabCalc.classList.remove('active');
+        secIns.classList.add('active');
+        secCalc.classList.remove('active');
+        renderMinCosto();
+        actualizarCostoFijo();
+      } else if (tab === 'calculadora') {
+        tabCalc.classList.add('active');
+        tabIns.classList.remove('active');
+        secCalc.classList.add('active');
+        secIns.classList.remove('active');
+        actualizarCostoFijo();
+      }
+    }
+
+    document.getElementById('tab-insumos').addEventListener('click', () => setActiveTab('insumos'));
+    document.getElementById('tab-calculadora').addEventListener('click', () => setActiveTab('calculadora'));
+
+    /* ---------- Inicialización ---------- */
+    // Al iniciar, se asigna el Valor por hora guardado (o el valor por defecto 6.00)
+    document.getElementById('valorHora').value = obtenerValorHora();
+    setActiveTab('calculadora');
+    renderInsumos();
+  </script>
+</body>
+</html>
