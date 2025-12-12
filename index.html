@@ -1,609 +1,728 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Calculadora de Costo Tattoo</title>
-  <style>
-    /* Reset y estilos generales */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9fafb;
-      color: #333;
-      padding: 20px;
-    }
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    /* Pestañas */
-    .tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #ddd;
-    }
-    .tabs button {
-      background: none;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s ease;
-      color: #555;
-    }
-    .tabs button.active {
-      border-color: #3b82f6;
-      color: #3b82f6;
-      font-weight: bold;
-    }
-    /* Secciones */
-    .section {
-      display: none;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    .section.active {
-      display: block;
-    }
-    /* Formularios e insumos */
-    form { 
-      margin-bottom: 20px; 
-      transition: border 0.3s ease;
-    }
-    form label {
-      display: block;
-      margin: 10px 0 2px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    form input, form button {
-      padding: 10px;
-      font-size: 14px;
-      margin-bottom: 10px;
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    form button {
-      background: #3b82f6;
-      color: #fff;
-      cursor: pointer;
-      border: none;
-      transition: background 0.3s;
-    }
-    form button:hover {
-      background: #2563eb;
-    }
-    .insumo-list { 
-      margin-top: 10px; 
-    }
-    .insumo-item {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      background: #f1f5f9;
-      padding: 10px 12px;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-    /* Estilo especial para variables (no se pueden eliminar ni cambiar su nombre) */
-    .insumo-item.special-insumo {
-      background: #fff3e0;
-      border: 2px dashed #ffa500;
-    }
-    .insumo-item span {
-      flex: 1;
-      font-size: 14px;
-      margin-right: 10px;
-    }
-    .insumo-item button {
-      background: #3b82f6;
-      color: #fff;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      margin-left: 5px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: background 0.3s;
-    }
-    .insumo-item button:hover {
-      background: #2563eb;
-    }
-    .button-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      justify-content: center;
-    }
-    .button-row button,
-    .button-row input[type="file"] {
-      width: auto;
-      padding: 8px 12px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      background: #3b82f6;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .button-row button:hover,
-    .button-row input[type="file"]:hover {
-      background: #2563eb;
-    }
-    /* Responsividad para botones exportar/importar */
-    @media (max-width: 600px) {
-      .button-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .button-row button,
-      .button-row input[type="file"] {
-        width: 100%;
-      }
-    }
-    /* Sección costo mínimo */
-    .min-cost-section {
-      margin-top: 15px;
-      text-align: center;
-    }
-    .min-cost-section input {
-      width: auto;
-      display: inline-block;
-      margin-left: 8px;
-      padding: 5px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    /* Calculadora */
-    .calc-group { 
-      margin-bottom: 15px; 
-    }
-    .calc-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    .calc-group input {
-      padding: 10px;
-      font-size: 14px;
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .detalle {
-      text-align: center;
-      font-size: 13px;
-      color: #555;
-      margin-top: 10px;
-    }
-    .resultado {
-      text-align: center;
-      margin-top: 20px;
-      padding: 15px;
-      border: 2px solid #3b82f6;
-      border-radius: 8px;
-      background: #e0f2fe;
-    }
-    .resultado p {
-      font-size: 22px;
-      margin: 10px 0;
-      font-weight: bold;
-      color: #1e40af;
-    }
-    .nota {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-      color: #555;
-    }
-    /* Efecto de resaltado para edición */
-    .highlight {
-      border: 2px solid red;
-      animation: glow 1s ease-out;
-    }
-    @keyframes glow {
-      0% { border-color: red; }
-      100% { border-color: #ccc; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkCost Pro - Calculadora de Tatuajes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Animaciones */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Estilos de Impresión */
+        @media print {
+            body * { visibility: hidden; }
+            #report-modal, #report-modal * { visibility: visible; }
+            #report-modal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white; padding: 0; overflow: visible; }
+            #report-content { box-shadow: none; border: none; max-width: 100%; width: 100%; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+            /* Asegurar que se vean los colores de fondo */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0"
+  }
+}
+</script>
 </head>
-<body>
-  <h1>Calculadora para Tatuajes</h1>
-  <div style="text-align: center;">
-    <p>By: <a href="https://instagram.com/dr.velazquez">@dr.velazquez</a></p>
-  </div>
-  
-  <!-- Pestañas -->
-  <div class="tabs">
-    <button id="tab-insumos">🛠️ Insumos</button>
-    <button id="tab-calculadora" class="active">💶 Calculadora</button>
-  </div>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
 
-  <!-- Sección Calculadora (Página Inicial) -->
-  <div id="section-calculadora" class="section active">
-    <h2>Calculadora de Tatuaje</h2>
-    <!-- Variables: cantidades y valor por hora (con iconos) -->
-    <div class="calc-group">
-      <label for="tetinasCant">🔘 Tetinas - Cantidad usada:</label>
-      <input type="number" id="tetinasCant" value="1" min="0">
+    <!-- HEADER / BANNER SUPERIOR -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200">IC</div>
+                <h1 class="text-lg font-bold text-slate-800 tracking-tight hidden sm:block">InkCost Pro</h1>
+            </div>
+
+            <!-- Navegación Central -->
+            <div class="flex p-1 bg-slate-100/80 rounded-lg border border-slate-200">
+                <button onclick="switchTab('calculator')" id="btn-tab-calc" class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-white text-indigo-600 shadow-sm ring-1 ring-black/5">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    <span>Calculadora</span>
+                </button>
+                <button onclick="switchTab('supplies')" id="btn-tab-supplies" class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 text-slate-500 hover:text-slate-700">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>Insumos</span>
+                </button>
+            </div>
+
+            <div class="shrink-0 text-xs text-slate-400 font-medium hidden md:block">by @dr.velazquez</div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full flex-1">
+        
+        <!-- VISTA CALCULADORA -->
+        <div id="view-calculator" class="space-y-6 fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Columna Izquierda: Inputs -->
+                <div class="space-y-6">
+                    
+                    <!-- 1. TIEMPO (Lo más importante arriba) -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                            <h3 class="text-lg font-semibold text-slate-800">Tiempo y Mano de Obra</h3>
+                            <p class="text-sm text-slate-500 mt-0.5">Lo más importante: tu tiempo</p>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 flex items-center gap-1.5">
+                                        <i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i> Valor Hora
+                                    </label>
+                                    <input type="number" id="inp-hourly-rate" oninput="calculate()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-lg">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 flex items-center gap-1.5">
+                                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> Minutos
+                                    </label>
+                                    <input type="number" id="inp-minutes" value="0" oninput="calculate()" class="w-full px-4 py-2.5 bg-indigo-50 border border-indigo-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-indigo-700 text-lg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. INSUMOS VARIABLES -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                            <h3 class="text-lg font-semibold text-slate-800">Insumos Variables</h3>
+                            <p class="text-sm text-slate-500 mt-0.5">Solo lo que cambia por sesión</p>
+                        </div>
+                        <div class="p-6 space-y-5">
+                            
+                            <!-- Tinta -->
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                                    <i data-lucide="droplets" class="w-5 h-5"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-sm font-semibold text-slate-700 mb-1 block">Dosis de Tinta</label>
+                                    <input type="number" id="inp-tinta" value="1" min="0" oninput="calculate()" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <p class="text-xs text-slate-400 mt-1">* Incluye 1 tetina por dosis</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Agujas -->
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                                    <i data-lucide="syringe" class="w-5 h-5"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-sm font-semibold text-slate-700 mb-1 block">Agujas</label>
+                                    <input type="number" id="inp-agujas" value="1" min="0" oninput="calculate()" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Resultados -->
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-br from-indigo-600 to-blue-700 text-white rounded-xl shadow-xl shadow-indigo-200 relative overflow-hidden border-none">
+                        <i data-lucide="file-text" class="absolute top-0 right-0 w-32 h-32 opacity-10 transform rotate-12 m-4"></i>
+                        
+                        <div class="text-center py-8 relative z-10">
+                            <h3 class="text-sm font-medium text-indigo-100 mb-2 uppercase tracking-widest">Costo Final</h3>
+                            <div class="text-6xl font-bold mb-4 tracking-tighter" id="display-total">$0.00</div>
+                            <div id="badge-min-cost" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm border border-white/20 text-indigo-50 text-xs rounded-full font-medium">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> Costo mínimo aplicado
+                            </div>
+                        </div>
+
+                        <div class="border-t border-white/10 px-6 py-4 bg-black/10 space-y-3 text-sm relative z-10">
+                            <div class="flex justify-between text-indigo-100">
+                                <span>Costos Fijos Base</span>
+                                <span class="font-semibold text-white" id="display-fixed">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-indigo-100">
+                                <span>Variables (Tinta/Agujas)</span>
+                                <span class="font-semibold text-white" id="display-variable">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-indigo-100">
+                                <span>Mano de Obra</span>
+                                <span class="font-semibold text-white" id="display-time">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-indigo-100 pt-2 border-t border-white/5">
+                                <span>Subtotal</span>
+                                <span class="font-semibold text-white" id="display-subtotal">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-amber-300 font-medium">
+                                <span>Impuestos / Extra</span>
+                                <span id="display-tax-amt">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-black/20 relative z-10">
+                            <button onclick="openReport()" class="w-full py-3 bg-white text-indigo-700 rounded-lg font-bold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2 shadow-lg">
+                                <i data-lucide="file-text" class="w-5 h-5"></i>
+                                Generar Reporte / Imprimir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Config Impuestos -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                            <i data-lucide="percent" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-xs font-bold uppercase text-slate-500 block mb-1">Impuestos (%)</label>
+                            <input type="number" id="inp-tax-percent" value="0" min="0" oninput="calculate()" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <button onclick="resetCalculator()" class="w-full flex items-center justify-center gap-2 py-4 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all font-semibold shadow-sm">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Reiniciar Calculadora
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA GESTIÓN INSUMOS -->
+        <div id="view-supplies" class="space-y-8 fade-in hidden">
+            <!-- Configuración Global -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex flex-col md:flex-row gap-8 items-center justify-between">
+                    <div class="flex-1 w-full">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-2">Costo Mínimo (Piso)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                            <input type="number" id="inp-min-cost" onchange="saveConfig()" class="w-full pl-7 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-medium">
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Monto mínimo a cobrar, independientemente de los costos.</p>
+                    </div>
+                    <div class="flex-1 w-full bg-slate-50 rounded-xl p-5 text-center border border-slate-200">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Costo Fijo Base</span>
+                        <span class="text-3xl font-bold text-slate-800" id="supplies-fixed-display">$0.00</span>
+                        <span class="text-xs text-slate-400 block mt-1">por sesión (Incluye Guantes/Servilletas/etc)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario Agregar/Editar -->
+            <div id="form-container" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-300">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-slate-800" id="form-title">Agregar Nuevo Insumo</h3>
+                    <button id="btn-cancel-edit" onclick="resetForm()" class="text-slate-400 hover:text-red-500 hidden"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-6">
+                    <form id="supply-form" onsubmit="handleFormSubmit(event)" class="space-y-5">
+                        <input type="hidden" id="edit-index" value="-1">
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            <div class="md:col-span-6">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Nombre</label>
+                                <input type="text" id="frm-name" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Precio Paquete ($)</label>
+                                <input type="number" step="0.01" id="frm-price" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Rendimiento (Cant.)</label>
+                                <input type="number" id="frm-quantity" required class="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" id="btn-submit" class="px-6 py-2.5 rounded-lg flex items-center gap-2 font-medium text-white shadow-sm bg-slate-800 hover:bg-slate-900 transition-all">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Agregar a la Lista
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="file-spreadsheet" class="w-5 h-5 text-green-600"></i> Tabla de Insumos
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="exportCSV()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors">
+                            <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">Exportar Excel</span>
+                        </button>
+                        <label class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 cursor-pointer">
+                            <i data-lucide="upload" class="w-4 h-4"></i> <span class="hidden sm:inline">Importar JSON</span>
+                            <input type="file" onchange="importJSON(event)" accept=".json" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm bg-white">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500">
+                            <tr>
+                                <th class="px-5 py-4">Insumo</th>
+                                <th class="px-5 py-4 text-right">Precio Total</th>
+                                <th class="px-5 py-4 text-center">Rendimiento</th>
+                                <th class="px-5 py-4 text-right text-indigo-600">Costo Unitario</th>
+                                <th class="px-5 py-4 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplies-table-body" class="divide-y divide-slate-100">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL DE REPORTE (Hidden by default) -->
+    <div id="report-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto" onclick="closeModal(event)">
+        
+        <div id="report-content" class="bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden relative fade-in" onclick="event.stopPropagation()">
+            
+            <!-- Modal Header (No print) -->
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center no-print sticky top-0 z-10">
+                <h2 class="font-bold text-slate-700">Vista Previa del Reporte</h2>
+                <div class="flex gap-2">
+                    <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm shadow-sm">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
+                    </button>
+                    <button onclick="closeModal()" class="p-2 bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Cerrar">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hoja A4 -->
+            <div class="p-8 md:p-12 bg-white min-h-[20cm] text-slate-900 font-sans">
+                <!-- Header del Documento -->
+                <div class="flex justify-between items-start mb-12 border-b-2 border-slate-900 pb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-slate-900 uppercase tracking-tight">Reporte de Costos</h1>
+                        <p class="text-slate-500 mt-1">Estimación de Tatuaje</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-indigo-600">InkCost Pro</div>
+                        <p class="text-sm text-slate-400">@dr.velazquez</p>
+                        <p class="text-sm font-medium text-slate-600 mt-2" id="report-date">--/--/----</p>
+                    </div>
+                </div>
+
+                <!-- Info Cliente -->
+                <div class="mb-10 p-6 bg-slate-50 rounded-lg border border-slate-100">
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Cliente</span>
+                            <div class="h-6 border-b border-slate-300 w-full"></div>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Descripción / Zona</span>
+                            <div class="h-6 border-b border-slate-300 w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Desglose -->
+                <div class="mb-10">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-indigo-600 rounded-full"></span> Desglose de Costos
+                    </h3>
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-100 text-slate-500 font-bold uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Concepto</th>
+                                <th class="px-4 py-3 text-center">Detalle</th>
+                                <th class="px-4 py-3 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-slate-700">Costos Fijos</td>
+                                <td class="px-4 py-3 text-center text-slate-500">Insumos base por sesión</td>
+                                <td class="px-4 py-3 text-right font-medium" id="rep-fixed">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-slate-700">Mano de Obra</td>
+                                <td class="px-4 py-3 text-center text-slate-500" id="rep-time-detail">0 min @ $0/hr</td>
+                                <td class="px-4 py-3 text-right font-medium" id="rep-time-cost">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-slate-700">Insumos Variables</td>
+                                <td class="px-4 py-3 text-center text-slate-500" id="rep-vars-detail">...</td>
+                                <td class="px-4 py-3 text-right font-medium" id="rep-vars-cost">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-slate-700">Impuestos / Extra</td>
+                                <td class="px-4 py-3 text-center text-slate-500" id="rep-tax-detail">0%</td>
+                                <td class="px-4 py-3 text-right font-medium" id="rep-tax-cost">$0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totales -->
+                <div class="flex justify-end mb-12">
+                    <div class="w-1/2">
+                        <div class="flex justify-between py-2 border-b border-slate-200 text-slate-500">
+                            <span>Subtotal Calculado</span>
+                            <span id="rep-subtotal">$0.00</span>
+                        </div>
+                        <div id="rep-min-row" class="hidden flex justify-between py-2 border-b border-slate-200 text-amber-600 font-medium text-xs">
+                            <span>* Ajuste Costo Mínimo</span>
+                            <span>Aplicado</span>
+                        </div>
+                        <div class="flex justify-between py-4 items-center">
+                            <span class="text-xl font-bold text-slate-900">Costo Total</span>
+                            <span class="text-3xl font-bold text-indigo-600" id="rep-total">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t-2 border-slate-100 pt-6 text-center">
+                    <p class="text-slate-400 text-xs italic">Este documento es una estimación de costos válida por 15 días.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="calc-group">
-      <label for="tintaCant">🖌️ Tinta - Dosis usada:</label>
-      <input type="number" id="tintaCant" value="1" min="0">
-    </div>
-    <div class="calc-group">
-      <label for="agujaCant">💉 Agujas - Cantidad usada:</label>
-      <input type="number" id="agujaCant" value="1" min="0">
-    </div>
-    <div class="calc-group">
-      <label for="guantesCant">🧤 Guantes nitrilo - Cantidad usada:</label>
-      <input type="number" id="guantesCant" value="1" min="0">
-    </div>
-    <div class="calc-group">
-      <label for="valorHora">⏱️ Valor por hora ($):</label>
-      <input type="number" id="valorHora" value="6.00" step="0.01" min="0">
-    </div>
-    <div class="calc-group">
-      <label for="minutos">⌛ Minutos trabajados:</label>
-      <input type="number" id="minutos" value="0" min="0">
-    </div>
-    <!-- Detalle del costo fijo en pequeño -->
-    <div class="detalle" id="detalleCostos"></div>
-    <button onclick="calcular()" style="width:100%; padding:12px; background:#3b82f6; border:none; border-radius:4px; color:#fff; font-size:16px; cursor:pointer;">
-      Calcular
-    </button>
-    <div class="resultado" id="resultado">
-      <p>Costo final: $0.00</p>
-    </div>
-    <p class="nota">* El costo mínimo a cobrar es editable en la sección de Insumos.</p>
-  </div>
 
-  <!-- Sección Insumos -->
-  <div id="section-insumos" class="section">
-    <h2>Costos de Insumos</h2>
-    <form id="form-insumo">
-      <label for="nombre">Nombre del insumo:</label>
-      <input type="text" id="nombre" placeholder="Nombre del insumo" required>
-      <label for="precioTotal">Precio total ($):</label>
-      <input type="number" step="0.01" id="precioTotal" placeholder="Precio total ($)" required>
-      <label for="cantidad">Cantidad de tattoos que permite:</label>
-      <input type="number" id="cantidad" placeholder="Cantidad de tattoos que permite" required>
-      <button type="submit">Guardar Cambios</button>
-    </form>
-    <div class="insumo-list" id="listaInsumos">
-      <!-- Se llenan dinámicamente -->
-    </div>
-    <div class="button-row">
-      <button onclick="exportar()">📤 Exportar</button>
-      <input type="file" id="importarArchivo" onchange="importar(event)">
-    </div>
-    <!-- Costo mínimo editable -->
-    <div class="min-cost-section">
-      <label for="minCosto">Costo mínimo a cobrar ($):</label>
-      <input type="number" id="minCosto" value="15" step="0.01">
-    </div>
-    <p class="nota">* Para editar un insumo, haz clic en "Editar".</p>
-    <p style="text-align: center; font-size: 14px; color: #555;" id="costoFijoInsumos">
-      Costo Fijo para Tatuaje: $0.00
-    </p>
-  </div>
+    <!-- SCRIPTS LÓGICA -->
+    <script>
+        // --- CONSTANTES Y ESTADO ---
+        // Se removió "Guantes nitrilo" de especiales para que sea un costo fijo. Tetinas se mantiene para cálculo interno.
+        const SPECIAL_VARS = ["Tinta", "Tetinas", "Agujas"];
+        const INITIAL_DATA = [
+            { nombre: "Agujas", precioTotal: 30.00, cantidad: 20 },
+            { nombre: "Alcohol en gel", precioTotal: 3.00, cantidad: 30 },
+            { nombre: "Bajalenguas (x100u)", precioTotal: 3.00, cantidad: 100 },
+            { nombre: "Bolsitas cubregrip (x100)", precioTotal: 7.50, cantidad: 100 },
+            { nombre: "Botella aplicadora", precioTotal: 2.00, cantidad: 100 },
+            { nombre: "Desinfectante superficies", precioTotal: 5.00, cantidad: 5 },
+            { nombre: "Gillette (5 u)", precioTotal: 2.50, cantidad: 5 },
+            { nombre: "Termocopiadora", precioTotal: 90.00, cantidad: 200 },
+            { nombre: "Guantes nitrilo", precioTotal: 6.00, cantidad: 100 },
+            { nombre: "Jabón verde", precioTotal: 5.00, cantidad: 10 },
+            { nombre: "Papel film 15m", precioTotal: 3.00, cantidad: 5 },
+            { nombre: "Papel Hectografico (1 hoja)", precioTotal: 2.00, cantidad: 1 },
+            { nombre: "Parche Epidermico (3x20cm)", precioTotal: 1.80, cantidad: 9 },
+            { nombre: "Rollo grip", precioTotal: 1.00, cantidad: 3 },
+            { nombre: "Servilletas (3rollos)", precioTotal: 3.00, cantidad: 8 },
+            { nombre: "Stencil Stuff", precioTotal: 20.00, cantidad: 50 },
+            { nombre: "Tetinas", precioTotal: 2.00, cantidad: 100 },
+            { nombre: "Tinta", precioTotal: 15.00, cantidad: 20 },
+            { nombre: "Vaselina", precioTotal: 2.00, cantidad: 50 }
+        ];
 
-  <script>
-    /* ---------- Variables Globales ---------- */
-    const storageKey = 'insumosTattoo';
-    const minCostoKey = 'minCosto';
-    const valorHoraKey = 'valorHora'; // nueva clave para Valor por hora
-    // Variables especiales: no se pueden eliminar ni editar el nombre.
-    const specialVars = ["Guantes nitrilo", "Tinta", "Tetinas", "Agujas"];
+        let supplies = JSON.parse(localStorage.getItem('inkcost_supplies')) || INITIAL_DATA;
+        let minCost = parseFloat(localStorage.getItem('inkcost_min_cost')) || 15;
+        let hourlyRate = parseFloat(localStorage.getItem('inkcost_hourly_rate')) || 6.00;
+        let taxRate = parseFloat(localStorage.getItem('inkcost_tax_rate')) || 0;
 
-    /* ---------- Datos Iniciales de Insumos ---------- */
-    // Se eliminó "Precio Hora" (configurado en la Calculadora) y se ajustaron los nombres especiales.
-    const datosIniciales = [
-      { nombre: "Agujas", precioTotal: 30.00, cantidad: 20 },
-      { nombre: "Alcohol en gel", precioTotal: 3.00, cantidad: 30 },
-      { nombre: "Bajalenguas (x100u)", precioTotal: 3.00, cantidad: 100 },
-      { nombre: "Bolsitas cubregrip (x100)", precioTotal: 7.50, cantidad: 100 },
-      { nombre: "Botella aplicadora", precioTotal: 2.00, cantidad: 100 },
-      { nombre: "Desinfectante superficies", precioTotal: 5.00, cantidad: 5 },
-      { nombre: "Gillette (5 u)", precioTotal: 2.50, cantidad: 5 },
-      { nombre: "Termocopiadora", precioTotal: 90.00, cantidad: 200 },
-      { nombre: "Guantes nitrilo", precioTotal: 6.00, cantidad: 100 },
-      { nombre: "Jabón verde", precioTotal: 5.00, cantidad: 10 },
-      { nombre: "Papel film 15m", precioTotal: 3.00, cantidad: 5 },
-      { nombre: "Papel Hectografico (1 hoja)", precioTotal: 2.00, cantidad: 1 },
-      { nombre: "Parche Epidermico (3x20cm)", precioTotal: 1.80, cantidad: 9 },
-      { nombre: "Rollo grip", precioTotal: 1.00, cantidad: 3 },
-      { nombre: "Servilletas (3rollos)", precioTotal: 3.00, cantidad: 8 },
-      { nombre: "Stencil Stuff", precioTotal: 20.00, cantidad: 50 },
-      { nombre: "Tetinas", precioTotal: 2.00, cantidad: 100 },
-      { nombre: "Tinta", precioTotal: 15.00, cantidad: 20 },
-      { nombre: "Vaselina", precioTotal: 2.00, cantidad: 50 }
-    ];
+        // --- INICIALIZACIÓN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            document.getElementById('inp-hourly-rate').value = hourlyRate;
+            document.getElementById('inp-min-cost').value = minCost;
+            document.getElementById('inp-tax-percent').value = taxRate;
+            renderSuppliesTable();
+            calculate();
+        });
 
-    // Calcula costo por tattoo: precioTotal / cantidad (si cantidad > 0)
-    function calcularCostoTattoo(precio, cant) {
-      return cant > 0 ? precio / cant : 0;
-    }
+        // --- NAVEGACIÓN ---
+        function switchTab(tab) {
+            const btnCalc = document.getElementById('btn-tab-calc');
+            const btnSupp = document.getElementById('btn-tab-supplies');
+            const viewCalc = document.getElementById('view-calculator');
+            const viewSupp = document.getElementById('view-supplies');
 
-    /* ---------- Funciones de Almacenamiento ---------- */
-    function obtenerInsumos() {
-      const datos = localStorage.getItem(storageKey);
-      if (!datos) {
-        const inicializados = datosIniciales.map(insumo => ({
-          ...insumo,
-          costoTattoo: calcularCostoTattoo(insumo.precioTotal, insumo.cantidad)
-        }));
-        localStorage.setItem(storageKey, JSON.stringify(inicializados));
-        return inicializados;
-      }
-      return JSON.parse(datos);
-    }
-
-    function guardarInsumos(lista) {
-      const actualizados = lista.map(item => ({
-        ...item,
-        costoTattoo: calcularCostoTattoo(item.precioTotal, item.cantidad)
-      }));
-      localStorage.setItem(storageKey, JSON.stringify(actualizados));
-    }
-
-    function obtenerMinCosto() {
-      const min = localStorage.getItem(minCostoKey);
-      return min !== null ? parseFloat(min) : 15;
-    }
-
-    function guardarMinCosto(valor) {
-      localStorage.setItem(minCostoKey, valor);
-    }
-
-    // Función para obtener el valor guardado de Valor por hora
-    function obtenerValorHora() {
-      const vh = localStorage.getItem(valorHoraKey);
-      return vh !== null ? parseFloat(vh) : 6.00;
-    }
-
-    // Función para guardar el valor de Valor por hora
-    function guardarValorHora(valor) {
-      localStorage.setItem(valorHoraKey, valor);
-    }
-
-    /* ---------- Renderizado de Insumos ---------- */
-    function renderInsumos() {
-      const contenedor = document.getElementById('listaInsumos');
-      let lista = obtenerInsumos();
-      contenedor.innerHTML = '';
-
-      // Se agrupan las variables especiales en el orden definido.
-      const especiales = [];
-      specialVars.forEach(specialName => {
-        const item = lista.find(insumo => insumo.nombre === specialName);
-        if (item) especiales.push(item);
-      });
-
-      // Se recogen los insumos restantes en orden alfabético.
-      const restantes = lista.filter(item => !specialVars.includes(item.nombre))
-                              .sort((a, b) => a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase()));
-      // Se forma la lista final.
-      const listaFinal = [...especiales, ...restantes];
-
-      // Importante: se utiliza el índice original de la lista para conservar la referencia en edición/eliminación.
-      listaFinal.forEach(item => {
-        // Se obtiene el índice real en la lista original.
-        const indexOriginal = lista.findIndex(insumo => insumo.nombre === item.nombre && 
-          insumo.precioTotal === item.precioTotal && insumo.cantidad === item.cantidad
-        );
-        const div = document.createElement('div');
-        div.className = 'insumo-item' + (specialVars.includes(item.nombre) ? ' special-insumo' : '');
-        let botones = `<button onclick="editar(${indexOriginal})">Editar</button>`;
-        // No se muestra botón "Borrar" para variables especiales.
-        if (!specialVars.includes(item.nombre)) {
-          botones += `<button onclick="eliminar(${indexOriginal})">Borrar</button>`;
+            if (tab === 'calculator') {
+                viewCalc.classList.remove('hidden');
+                viewSupp.classList.add('hidden');
+                
+                btnCalc.classList.add('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
+                btnCalc.classList.remove('text-slate-500');
+                
+                btnSupp.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
+                btnSupp.classList.add('text-slate-500');
+            } else {
+                viewCalc.classList.add('hidden');
+                viewSupp.classList.remove('hidden');
+                
+                btnSupp.classList.add('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
+                btnSupp.classList.remove('text-slate-500');
+                
+                btnCalc.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
+                btnCalc.classList.add('text-slate-500');
+            }
         }
-        div.innerHTML = `
-          <span><strong>${item.nombre}</strong> - $${item.precioTotal.toFixed(2)} | Cantidad: ${item.cantidad} | Costo/tattoo: $${item.costoTattoo.toFixed(2)}</span>
-          ${botones}
-        `;
-        contenedor.appendChild(div);
-      });
-      actualizarCostoFijo();
-    }
 
-    function actualizarCostoFijo() {
-      const lista = obtenerInsumos();
-      let fijo = 0;
-      // Se excluyen del costo fijo las variables especiales.
-      lista.forEach(item => {
-        if (!specialVars.includes(item.nombre)) {
-          fijo += item.costoTattoo;
+        // --- CÁLCULOS ---
+        function getCostPerUnit(name) {
+            const item = supplies.find(s => s.nombre === name);
+            return (item && item.cantidad > 0) ? item.precioTotal / item.cantidad : 0;
         }
-      });
-      document.getElementById('costoFijoInsumos').innerText = 'Costo Fijo para Tatuaje: $' + fijo.toFixed(2);
-      document.getElementById('detalleCostos').innerText = `Costo Fijo: $${fijo.toFixed(2)}`;
-      return fijo;
-    }
 
-    /* ---------- Formularios ---------- */
-    function editar(index) {
-      const lista = obtenerInsumos();
-      const insumo = lista[index];
-      const nombreInput = document.getElementById('nombre');
-      nombreInput.value = insumo.nombre;
-      // Si es variable especial, se deshabilita la edición del nombre.
-      if (specialVars.includes(insumo.nombre)) {
-        nombreInput.disabled = true;
-      } else {
-        nombreInput.disabled = false;
-      }
-      document.getElementById('precioTotal').value = insumo.precioTotal;
-      document.getElementById('cantidad').value = insumo.cantidad;
-      document.getElementById('form-insumo').setAttribute('data-index', index);
-      document.getElementById('form-insumo').scrollIntoView({ behavior: 'smooth' });
-      const form = document.getElementById('form-insumo');
-      form.classList.add('highlight');
-      setTimeout(() => form.classList.remove('highlight'), 1000);
-    }
+        function calculate() {
+            // Guardar configuración
+            const rate = parseFloat(document.getElementById('inp-hourly-rate').value) || 0;
+            const tax = parseFloat(document.getElementById('inp-tax-percent').value) || 0;
+            localStorage.setItem('inkcost_hourly_rate', rate);
+            localStorage.setItem('inkcost_tax_rate', tax);
 
-    function eliminar(index) {
-      let lista = obtenerInsumos();
-      // Se previene eliminar variables especiales.
-      if (specialVars.includes(lista[index].nombre)) return;
-      lista.splice(index, 1);
-      guardarInsumos(lista);
-      renderInsumos();
-    }
+            // Inputs
+            const minutes = parseFloat(document.getElementById('inp-minutes').value) || 0;
+            const qTinta = parseFloat(document.getElementById('inp-tinta').value) || 0;
+            const qAgujas = parseFloat(document.getElementById('inp-agujas').value) || 0;
+            
+            // Lógica implícita: 1 Tetina por cada dosis de tinta
+            const qTetinas = qTinta; 
 
-    document.getElementById('form-insumo').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const nombreInput = document.getElementById('nombre');
-      const nombre = nombreInput.value.trim();
-      const precioTotal = parseFloat(document.getElementById('precioTotal').value);
-      const cantidad = parseInt(document.getElementById('cantidad').value);
-      let lista = obtenerInsumos();
-      const idx = this.getAttribute('data-index');
-      if (idx !== null) {
-        // Si es variable especial, se mantiene el nombre sin cambios.
-        if (specialVars.includes(lista[idx].nombre)) {
-          lista[idx] = { nombre: lista[idx].nombre, precioTotal, cantidad };
-        } else {
-          lista[idx] = { nombre, precioTotal, cantidad };
+            // 1. Costo Fijo (items no especiales)
+            // Al quitar Guantes de SPECIAL_VARS, se suman aquí automáticamente
+            const fixed = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre))
+                .reduce((sum, item) => sum + (item.cantidad > 0 ? item.precioTotal / item.cantidad : 0), 0);
+
+            // 2. Variables
+            const costTinta = qTinta * getCostPerUnit("Tinta");
+            const costTetinas = qTetinas * getCostPerUnit("Tetinas"); // Costo interno
+            const costAgujas = qAgujas * getCostPerUnit("Agujas");
+            const variableTotal = costTinta + costTetinas + costAgujas;
+
+            // 3. Tiempo
+            const timeCost = rate * (minutes / 60);
+
+            // 4. Subtotal
+            const subtotal = fixed + variableTotal + timeCost;
+            
+            // 5. Impuestos
+            const taxAmount = subtotal * (tax / 100);
+
+            // 6. Total Final (Con piso mínimo)
+            // Primero se aplica el mínimo al subtotal operativo, luego se suma el impuesto? 
+            // O el impuesto es sobre el precio final? Generalmente el impuesto se suma al final.
+            // Vamos a sumar impuesto al total.
+            const totalWithTax = subtotal + taxAmount;
+            
+            // Aplicar mínimo: Si el total calculado es menor al mínimo, usamos el mínimo.
+            // OJO: El mínimo suele ser "lo menos que cobro por prender la máquina".
+            // Asumiremos que el mínimo incluye impuestos o es neto? Normalmente es el precio final al cliente.
+            const finalTotal = Math.max(totalWithTax, minCost);
+            const isMinApplied = finalTotal > totalWithTax;
+
+            // Render UI
+            document.getElementById('display-total').innerText = `$${finalTotal.toFixed(2)}`;
+            document.getElementById('display-fixed').innerText = `$${fixed.toFixed(2)}`;
+            document.getElementById('display-variable').innerText = `$${variableTotal.toFixed(2)}`;
+            document.getElementById('display-time').innerText = `$${timeCost.toFixed(2)}`;
+            document.getElementById('display-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('display-tax-amt').innerText = `+$${taxAmount.toFixed(2)}`;
+            
+            const badge = document.getElementById('badge-min-cost');
+            if(isMinApplied) badge.classList.remove('hidden'); else badge.classList.add('hidden');
         }
-        this.removeAttribute('data-index');
-      } else {
-        // Si ya existe un insumo con ese nombre, se actualiza.
-        const pos = lista.findIndex(item => item.nombre.toLowerCase() === nombre.toLowerCase());
-        if (pos >= 0) {
-          if (specialVars.includes(lista[pos].nombre)) {
-            lista[pos] = { nombre: lista[pos].nombre, precioTotal, cantidad };
-          } else {
-            lista[pos] = { nombre, precioTotal, cantidad };
-          }
-        } else {
-          lista.push({ nombre, precioTotal, cantidad });
+
+        function resetCalculator() {
+            document.getElementById('inp-minutes').value = 0;
+            document.getElementById('inp-tinta').value = 1;
+            document.getElementById('inp-agujas').value = 1;
+            calculate();
         }
-      }
-      // Se vuelve a habilitar el input nombre tras la edición.
-      nombreInput.disabled = false;
-      guardarInsumos(lista);
-      this.reset();
-      renderInsumos();
-    });
 
-    document.getElementById('minCosto').addEventListener('change', function() {
-      const valor = parseFloat(this.value) || 15;
-      guardarMinCosto(valor);
-    });
-
-    function renderMinCosto() {
-      document.getElementById('minCosto').value = obtenerMinCosto();
-    }
-
-    /* ---------- Exportar/Importar ---------- */
-    function exportar() {
-      const data = localStorage.getItem(storageKey);
-      const blob = new Blob([data], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'insumosTattoo.json';
-      a.click();
-    }
-
-    function importar(e) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        try {
-          const datos = JSON.parse(ev.target.result);
-          guardarInsumos(datos);
-          renderInsumos();
-        } catch (err) {
-          alert('Error al importar datos.');
+        // --- GESTIÓN INSUMOS ---
+        function saveConfig() {
+            const val = parseFloat(document.getElementById('inp-min-cost').value) || 0;
+            localStorage.setItem('inkcost_min_cost', val);
+            minCost = val;
+            calculate();
         }
-      }
-      reader.readAsText(file);
-    }
 
-    /* ---------- Calculadora ---------- */
-    // Obtiene el costo unitario de un insumo por su nombre.
-    function obtenerCosto(nombre) {
-      const lista = obtenerInsumos();
-      const insumo = lista.find(item => item.nombre === nombre);
-      return insumo ? insumo.costoTattoo : 0;
-    }
+        function renderSuppliesTable() {
+            const tbody = document.getElementById('supplies-table-body');
+            tbody.innerHTML = '';
+            
+            // Separar especiales y ordenar
+            const specials = supplies.filter(s => SPECIAL_VARS.includes(s.nombre));
+            const others = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre))
+                                   .sort((a,b) => a.nombre.localeCompare(b.nombre));
+            const sorted = [...specials, ...others];
 
-    function calcular() {
-      // Guarda el valor actual de "Valor por hora" en localStorage.
-      const valorHoraInput = document.getElementById('valorHora');
-      const valorHora = Number(valorHoraInput.value) || 0;
-      guardarValorHora(valorHora);
-      
-      const fijo = actualizarCostoFijo();
-      // Variables (usando los nombres actualizados)
-      const costoTetinas = obtenerCosto('Tetinas');
-      const costoTinta  = obtenerCosto('Tinta');
-      const costoAguja  = obtenerCosto('Agujas');
-      const costoGuante = obtenerCosto('Guantes nitrilo');
+            // Calcular fijo para mostrar
+            const fixed = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre))
+                .reduce((sum, item) => sum + (item.cantidad > 0 ? item.precioTotal / item.cantidad : 0), 0);
+            document.getElementById('supplies-fixed-display').innerText = `$${fixed.toFixed(2)}`;
 
-      const tetinasCant = Number(document.getElementById('tetinasCant').value) || 0;
-      const tintaCant   = Number(document.getElementById('tintaCant').value) || 0;
-      const agujaCant   = Number(document.getElementById('agujaCant').value) || 0;
-      const guantesCant = Number(document.getElementById('guantesCant').value) || 0;
-      const minutos     = Number(document.getElementById('minutos').value) || 0;
+            sorted.forEach(item => {
+                const isSpecial = SPECIAL_VARS.includes(item.nombre);
+                const unitCost = item.cantidad > 0 ? item.precioTotal / item.cantidad : 0;
+                const originalIndex = supplies.indexOf(item); // Key for editing
 
-      const costoVarTetinas = tetinasCant * costoTetinas;
-      const costoVarTinta   = tintaCant * costoTinta;
-      const costoVarAgujas  = agujaCant * costoAguja;
-      const costoVarGuantes = guantesCant * costoGuante;
-      const costoVariables = costoVarTetinas + costoVarTinta + costoVarAgujas + costoVarGuantes;
-      const costoTiempo = valorHora * (minutos / 60);
+                const tr = document.createElement('tr');
+                tr.className = `group hover:bg-slate-50 transition-colors ${isSpecial ? 'bg-amber-50/30' : ''}`;
+                tr.innerHTML = `
+                    <td class="px-5 py-3 font-medium text-slate-800">
+                        <div class="flex items-center gap-2">
+                            ${item.nombre}
+                            ${isSpecial ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">VAR</span>' : ''}
+                        </div>
+                    </td>
+                    <td class="px-5 py-3 text-right text-slate-600">$${item.precioTotal.toFixed(2)}</td>
+                    <td class="px-5 py-3 text-center"><span class="inline-block px-2 py-1 bg-slate-100 rounded text-slate-600 text-xs font-semibold">${item.cantidad} u.</span></td>
+                    <td class="px-5 py-3 text-right font-bold text-indigo-600">$${unitCost.toFixed(4)}</td>
+                    <td class="px-5 py-3 text-center">
+                        <div class="flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editSupply(${originalIndex})" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                            ${!isSpecial ? `<button onclick="deleteSupply(${originalIndex})" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+            calculate(); // Recalcular totales generales si cambiaron precios
+        }
 
-      let costoTotal = fijo + costoVariables + costoTiempo;
-      const minC = obtenerMinCosto();
-      if (costoTotal < minC) costoTotal = minC;
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('frm-name').value;
+            const price = parseFloat(document.getElementById('frm-price').value) || 0;
+            const qty = parseFloat(document.getElementById('frm-quantity').value) || 0;
+            const index = parseInt(document.getElementById('edit-index').value);
 
-      document.getElementById('resultado').innerHTML = `<p>Costo final: $${costoTotal.toFixed(2)}</p>`;
-    }
+            if (index >= 0) {
+                // Edit
+                if (SPECIAL_VARS.includes(supplies[index].nombre)) {
+                    supplies[index] = { ...supplies[index], precioTotal: price, cantidad: qty };
+                } else {
+                    supplies[index] = { nombre: name, precioTotal: price, cantidad: qty };
+                }
+            } else {
+                // Create
+                supplies.push({ nombre: name, precioTotal: price, cantidad: qty });
+            }
 
-    /* ---------- Gestión de Pestañas ---------- */
-    function setActiveTab(tab) {
-      const tabIns = document.getElementById('tab-insumos');
-      const tabCalc = document.getElementById('tab-calculadora');
-      const secIns = document.getElementById('section-insumos');
-      const secCalc = document.getElementById('section-calculadora');
-      if (tab === 'insumos') {
-        tabIns.classList.add('active');
-        tabCalc.classList.remove('active');
-        secIns.classList.add('active');
-        secCalc.classList.remove('active');
-        renderMinCosto();
-        actualizarCostoFijo();
-      } else if (tab === 'calculadora') {
-        tabCalc.classList.add('active');
-        tabIns.classList.remove('active');
-        secCalc.classList.add('active');
-        secIns.classList.remove('active');
-        actualizarCostoFijo();
-      }
-    }
+            localStorage.setItem('inkcost_supplies', JSON.stringify(supplies));
+            resetForm();
+            renderSuppliesTable();
+        }
 
-    document.getElementById('tab-insumos').addEventListener('click', () => setActiveTab('insumos'));
-    document.getElementById('tab-calculadora').addEventListener('click', () => setActiveTab('calculadora'));
+        function editSupply(index) {
+            const item = supplies[index];
+            document.getElementById('frm-name').value = item.nombre;
+            document.getElementById('frm-name').disabled = SPECIAL_VARS.includes(item.nombre);
+            document.getElementById('frm-price').value = item.precioTotal;
+            document.getElementById('frm-quantity').value = item.cantidad;
+            document.getElementById('edit-index').value = index;
+            
+            document.getElementById('form-title').innerText = "Editar Insumo";
+            document.getElementById('btn-submit').innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios`;
+            document.getElementById('btn-submit').classList.remove('bg-slate-800');
+            document.getElementById('btn-submit').classList.add('bg-indigo-600');
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+            document.getElementById('form-container').classList.add('ring-2', 'ring-indigo-500');
+            lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-    /* ---------- Inicialización ---------- */
-    // Al iniciar, se asigna el Valor por hora guardado (o el valor por defecto 6.00)
-    document.getElementById('valorHora').value = obtenerValorHora();
-    setActiveTab('calculadora');
-    renderInsumos();
-  </script>
+        function deleteSupply(index) {
+            if(confirm("¿Eliminar insumo?")) {
+                supplies.splice(index, 1);
+                localStorage.setItem('inkcost_supplies', JSON.stringify(supplies));
+                renderSuppliesTable();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('supply-form').reset();
+            document.getElementById('edit-index').value = -1;
+            document.getElementById('frm-name').disabled = false;
+            document.getElementById('form-title').innerText = "Agregar Nuevo Insumo";
+            document.getElementById('btn-submit').innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> Agregar a la Lista`;
+            document.getElementById('btn-submit').classList.add('bg-slate-800');
+            document.getElementById('btn-submit').classList.remove('bg-indigo-600');
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('form-container').classList.remove('ring-2', 'ring-indigo-500');
+            lucide.createIcons();
+        }
+
+        function exportCSV() {
+            const headers = ["Nombre", "Precio Total", "Cantidad", "Costo Unitario"];
+            const rows = supplies.map(i => `"${i.nombre}",${i.precioTotal},${i.cantidad},${(i.cantidad>0?i.precioTotal/i.cantidad:0).toFixed(4)}`);
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'insumos.csv'; a.click();
+        }
+
+        function importJSON(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if(Array.isArray(data)) {
+                        supplies = data;
+                        localStorage.setItem('inkcost_supplies', JSON.stringify(supplies));
+                        renderSuppliesTable();
+                        alert('Importado correctamente');
+                    }
+                } catch(err) { alert('Error archivo invalido'); }
+            };
+            r.readAsText(file);
+        }
+
+        // --- REPORTE ---
+        function openReport() {
+            const min = parseFloat(document.getElementById('inp-minutes').value) || 0;
+            const rate = parseFloat(document.getElementById('inp-hourly-rate').value) || 0;
+            
+            // Update Report DOM
+            document.getElementById('report-date').innerText = new Date().toLocaleDateString();
+            document.getElementById('rep-fixed').innerText = document.getElementById('display-fixed').innerText;
+            
+            document.getElementById('rep-time-detail').innerText = `${min} min @ $${rate}/hr`;
+            document.getElementById('rep-time-cost').innerText = document.getElementById('display-time').innerText;
+
+            const qTin = document.getElementById('inp-tinta').value;
+            const qAgu = document.getElementById('inp-agujas').value;
+            // Tetinas implícitas
+            document.getElementById('rep-vars-detail').innerText = `Tinta/Tetinas: ${qTin} dosis, Agujas: ${qAgu}`;
+            document.getElementById('rep-vars-cost').innerText = document.getElementById('display-variable').innerText;
+
+            const taxP = document.getElementById('inp-tax-percent').value;
+            document.getElementById('rep-tax-detail').innerText = `${taxP}%`;
+            document.getElementById('rep-tax-cost').innerText = document.getElementById('display-tax-amt').innerText;
+
+            document.getElementById('rep-subtotal').innerText = document.getElementById('display-subtotal').innerText;
+            document.getElementById('rep-total').innerText = document.getElementById('display-total').innerText;
+            
+            const badgeVisible = !document.getElementById('badge-min-cost').classList.contains('hidden');
+            if(badgeVisible) document.getElementById('rep-min-row').classList.remove('hidden');
+            else document.getElementById('rep-min-row').classList.add('hidden');
+
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        function closeModal(e) {
+            // Si viene del evento de click en background, verificar target
+            if (e && e.target !== e.currentTarget && e.target.closest('#report-content')) return;
+            document.getElementById('report-modal').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
