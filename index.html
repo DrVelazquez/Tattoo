@@ -24,7 +24,6 @@
             #report-modal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white; padding: 0; overflow: visible; }
             #report-content { box-shadow: none; border: none; max-width: 100%; width: 100%; padding: 0; margin: 0; }
             .no-print { display: none !important; }
-            /* Asegurar que se vean los colores de fondo */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
@@ -42,16 +41,14 @@
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
 
-    <!-- HEADER / BANNER SUPERIOR -->
+    <!-- HEADER -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-            <!-- Logo -->
             <div class="flex items-center gap-2 shrink-0">
                 <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200">IC</div>
                 <h1 class="text-lg font-bold text-slate-800 tracking-tight hidden sm:block">InkCost Pro</h1>
             </div>
 
-            <!-- Navegación Central -->
             <div class="flex p-1 bg-slate-100/80 rounded-lg border border-slate-200">
                 <button onclick="switchTab('calculator')" id="btn-tab-calc" class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-white text-indigo-600 shadow-sm ring-1 ring-black/5">
                     <i data-lucide="calculator" class="w-4 h-4"></i>
@@ -74,10 +71,9 @@
         <div id="view-calculator" class="space-y-6 fade-in">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                <!-- Columna Izquierda: Inputs -->
+                <!-- Inputs -->
                 <div class="space-y-6">
-                    
-                    <!-- 1. TIEMPO (Lo más importante arriba) -->
+                    <!-- Tiempo -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
                             <h3 class="text-lg font-semibold text-slate-800">Tiempo y Mano de Obra</h3>
@@ -101,7 +97,7 @@
                         </div>
                     </div>
 
-                    <!-- 2. INSUMOS VARIABLES -->
+                    <!-- Insumos Variables -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
                             <h3 class="text-lg font-semibold text-slate-800">Insumos Variables</h3>
@@ -136,7 +132,7 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Resultados -->
+                <!-- Resultados -->
                 <div class="space-y-6">
                     <div class="bg-gradient-to-br from-indigo-600 to-blue-700 text-white rounded-xl shadow-xl shadow-indigo-200 relative overflow-hidden border-none">
                         <i data-lucide="file-text" class="absolute top-0 right-0 w-32 h-32 opacity-10 transform rotate-12 m-4"></i>
@@ -210,12 +206,12 @@
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
                             <input type="number" id="inp-min-cost" onchange="saveConfig()" class="w-full pl-7 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-medium">
                         </div>
-                        <p class="text-xs text-slate-400 mt-2">Monto mínimo a cobrar, independientemente de los costos.</p>
+                        <p class="text-xs text-slate-400 mt-2">Monto mínimo a cobrar.</p>
                     </div>
                     <div class="flex-1 w-full bg-slate-50 rounded-xl p-5 text-center border border-slate-200">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Costo Fijo Base</span>
                         <span class="text-3xl font-bold text-slate-800" id="supplies-fixed-display">$0.00</span>
-                        <span class="text-xs text-slate-400 block mt-1">por sesión (Incluye Guantes/Servilletas/etc)</span>
+                        <span class="text-xs text-slate-400 block mt-1">por sesión (Guantes, Servilletas, etc)</span>
                     </div>
                 </div>
             </div>
@@ -258,14 +254,24 @@
                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                         <i data-lucide="file-spreadsheet" class="w-5 h-5 text-green-600"></i> Tabla de Insumos
                     </h2>
-                    <div class="flex gap-2">
-                        <button onclick="exportCSV()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors">
-                            <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">Exportar Excel</span>
+                    
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <!-- Botones de Respaldo -->
+                        <button onclick="exportJSON()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors" title="Guardar copia de seguridad">
+                            <i data-lucide="save" class="w-4 h-4"></i> <span class="hidden sm:inline">Respaldo JSON</span>
                         </button>
-                        <label class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 cursor-pointer">
+                        
+                        <label class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 cursor-pointer" title="Restaurar copia de seguridad">
                             <i data-lucide="upload" class="w-4 h-4"></i> <span class="hidden sm:inline">Importar JSON</span>
                             <input type="file" onchange="importJSON(event)" accept=".json" class="hidden">
                         </label>
+
+                        <div class="w-px h-6 bg-slate-300 mx-1 hidden sm:block"></div>
+
+                        <!-- Exportar Excel -->
+                        <button onclick="exportCSV()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors" title="Descargar tabla para Excel">
+                            <i data-lucide="sheet" class="w-4 h-4"></i> <span class="hidden sm:inline">Exportar Excel</span>
+                        </button>
                     </div>
                 </div>
 
@@ -280,9 +286,7 @@
                                 <th class="px-5 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="supplies-table-body" class="divide-y divide-slate-100">
-                            <!-- Rows generated by JS -->
-                        </tbody>
+                        <tbody id="supplies-table-body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -290,27 +294,22 @@
 
     </main>
 
-    <!-- MODAL DE REPORTE (Hidden by default) -->
+    <!-- MODAL DE REPORTE -->
     <div id="report-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto" onclick="closeModal(event)">
-        
         <div id="report-content" class="bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden relative fade-in" onclick="event.stopPropagation()">
-            
-            <!-- Modal Header (No print) -->
+            <!-- Header Modal -->
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center no-print sticky top-0 z-10">
                 <h2 class="font-bold text-slate-700">Vista Previa del Reporte</h2>
                 <div class="flex gap-2">
                     <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm shadow-sm">
                         <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
                     </button>
-                    <button onclick="closeModal()" class="p-2 bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Cerrar">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
+                    <button onclick="closeModal()" class="p-2 bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
             </div>
 
-            <!-- Hoja A4 -->
+            <!-- Hoja Reporte -->
             <div class="p-8 md:p-12 bg-white min-h-[20cm] text-slate-900 font-sans">
-                <!-- Header del Documento -->
                 <div class="flex justify-between items-start mb-12 border-b-2 border-slate-900 pb-6">
                     <div>
                         <h1 class="text-3xl font-bold text-slate-900 uppercase tracking-tight">Reporte de Costos</h1>
@@ -323,7 +322,6 @@
                     </div>
                 </div>
 
-                <!-- Info Cliente -->
                 <div class="mb-10 p-6 bg-slate-50 rounded-lg border border-slate-100">
                     <div class="grid grid-cols-2 gap-8">
                         <div>
@@ -337,10 +335,9 @@
                     </div>
                 </div>
 
-                <!-- Tabla Desglose -->
                 <div class="mb-10">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <span class="w-1.5 h-6 bg-indigo-600 rounded-full"></span> Desglose de Costos
+                        <span class="w-1.5 h-6 bg-indigo-600 rounded-full"></span> Desglose
                     </h3>
                     <table class="w-full text-sm">
                         <thead class="bg-slate-100 text-slate-500 font-bold uppercase text-xs">
@@ -353,7 +350,7 @@
                         <tbody class="divide-y divide-slate-100">
                             <tr>
                                 <td class="px-4 py-3 font-medium text-slate-700">Costos Fijos</td>
-                                <td class="px-4 py-3 text-center text-slate-500">Insumos base por sesión</td>
+                                <td class="px-4 py-3 text-center text-slate-500">Insumos base (guantes, etc)</td>
                                 <td class="px-4 py-3 text-right font-medium" id="rep-fixed">$0.00</td>
                             </tr>
                             <tr>
@@ -375,7 +372,6 @@
                     </table>
                 </div>
 
-                <!-- Totales -->
                 <div class="flex justify-end mb-12">
                     <div class="w-1/2">
                         <div class="flex justify-between py-2 border-b border-slate-200 text-slate-500">
@@ -392,18 +388,13 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="border-t-2 border-slate-100 pt-6 text-center">
-                    <p class="text-slate-400 text-xs italic">Este documento es una estimación de costos válida por 15 días.</p>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS LÓGICA -->
+    <!-- SCRIPTS -->
     <script>
-        // --- CONSTANTES Y ESTADO ---
-        // Se removió "Guantes nitrilo" de especiales para que sea un costo fijo. Tetinas se mantiene para cálculo interno.
+        // CONFIGURACIÓN
         const SPECIAL_VARS = ["Tinta", "Tetinas", "Agujas"];
         const INITIAL_DATA = [
             { nombre: "Agujas", precioTotal: 30.00, cantidad: 20 },
@@ -432,7 +423,6 @@
         let hourlyRate = parseFloat(localStorage.getItem('inkcost_hourly_rate')) || 6.00;
         let taxRate = parseFloat(localStorage.getItem('inkcost_tax_rate')) || 0;
 
-        // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             document.getElementById('inp-hourly-rate').value = hourlyRate;
@@ -442,7 +432,6 @@
             calculate();
         });
 
-        // --- NAVEGACIÓN ---
         function switchTab(tab) {
             const btnCalc = document.getElementById('btn-tab-calc');
             const btnSupp = document.getElementById('btn-tab-supplies');
@@ -450,80 +439,48 @@
             const viewSupp = document.getElementById('view-supplies');
 
             if (tab === 'calculator') {
-                viewCalc.classList.remove('hidden');
-                viewSupp.classList.add('hidden');
-                
-                btnCalc.classList.add('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
-                btnCalc.classList.remove('text-slate-500');
-                
-                btnSupp.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
-                btnSupp.classList.add('text-slate-500');
+                viewCalc.classList.remove('hidden'); viewSupp.classList.add('hidden');
+                btnCalc.classList.add('bg-white','text-indigo-600','shadow-sm','ring-1','ring-black/5'); btnCalc.classList.remove('text-slate-500');
+                btnSupp.classList.remove('bg-white','text-indigo-600','shadow-sm','ring-1','ring-black/5'); btnSupp.classList.add('text-slate-500');
             } else {
-                viewCalc.classList.add('hidden');
-                viewSupp.classList.remove('hidden');
-                
-                btnSupp.classList.add('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
-                btnSupp.classList.remove('text-slate-500');
-                
-                btnCalc.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm', 'ring-1', 'ring-black/5');
-                btnCalc.classList.add('text-slate-500');
+                viewCalc.classList.add('hidden'); viewSupp.classList.remove('hidden');
+                btnSupp.classList.add('bg-white','text-indigo-600','shadow-sm','ring-1','ring-black/5'); btnSupp.classList.remove('text-slate-500');
+                btnCalc.classList.remove('bg-white','text-indigo-600','shadow-sm','ring-1','ring-black/5'); btnCalc.classList.add('text-slate-500');
             }
         }
 
-        // --- CÁLCULOS ---
         function getCostPerUnit(name) {
             const item = supplies.find(s => s.nombre === name);
             return (item && item.cantidad > 0) ? item.precioTotal / item.cantidad : 0;
         }
 
         function calculate() {
-            // Guardar configuración
             const rate = parseFloat(document.getElementById('inp-hourly-rate').value) || 0;
             const tax = parseFloat(document.getElementById('inp-tax-percent').value) || 0;
             localStorage.setItem('inkcost_hourly_rate', rate);
             localStorage.setItem('inkcost_tax_rate', tax);
 
-            // Inputs
             const minutes = parseFloat(document.getElementById('inp-minutes').value) || 0;
             const qTinta = parseFloat(document.getElementById('inp-tinta').value) || 0;
             const qAgujas = parseFloat(document.getElementById('inp-agujas').value) || 0;
-            
-            // Lógica implícita: 1 Tetina por cada dosis de tinta
-            const qTetinas = qTinta; 
+            const qTetinas = qTinta; // Lógica implícita
 
-            // 1. Costo Fijo (items no especiales)
-            // Al quitar Guantes de SPECIAL_VARS, se suman aquí automáticamente
+            // Costo Fijo (excluyendo especiales)
             const fixed = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre))
                 .reduce((sum, item) => sum + (item.cantidad > 0 ? item.precioTotal / item.cantidad : 0), 0);
 
-            // 2. Variables
-            const costTinta = qTinta * getCostPerUnit("Tinta");
-            const costTetinas = qTetinas * getCostPerUnit("Tetinas"); // Costo interno
-            const costAgujas = qAgujas * getCostPerUnit("Agujas");
-            const variableTotal = costTinta + costTetinas + costAgujas;
+            // Variables
+            const variableTotal = (qTinta * getCostPerUnit("Tinta")) + 
+                                  (qTetinas * getCostPerUnit("Tetinas")) + 
+                                  (qAgujas * getCostPerUnit("Agujas"));
 
-            // 3. Tiempo
             const timeCost = rate * (minutes / 60);
-
-            // 4. Subtotal
             const subtotal = fixed + variableTotal + timeCost;
-            
-            // 5. Impuestos
             const taxAmount = subtotal * (tax / 100);
-
-            // 6. Total Final (Con piso mínimo)
-            // Primero se aplica el mínimo al subtotal operativo, luego se suma el impuesto? 
-            // O el impuesto es sobre el precio final? Generalmente el impuesto se suma al final.
-            // Vamos a sumar impuesto al total.
             const totalWithTax = subtotal + taxAmount;
-            
-            // Aplicar mínimo: Si el total calculado es menor al mínimo, usamos el mínimo.
-            // OJO: El mínimo suele ser "lo menos que cobro por prender la máquina".
-            // Asumiremos que el mínimo incluye impuestos o es neto? Normalmente es el precio final al cliente.
             const finalTotal = Math.max(totalWithTax, minCost);
             const isMinApplied = finalTotal > totalWithTax;
 
-            // Render UI
             document.getElementById('display-total').innerText = `$${finalTotal.toFixed(2)}`;
             document.getElementById('display-fixed').innerText = `$${fixed.toFixed(2)}`;
             document.getElementById('display-variable').innerText = `$${variableTotal.toFixed(2)}`;
@@ -542,7 +499,6 @@
             calculate();
         }
 
-        // --- GESTIÓN INSUMOS ---
         function saveConfig() {
             const val = parseFloat(document.getElementById('inp-min-cost').value) || 0;
             localStorage.setItem('inkcost_min_cost', val);
@@ -554,13 +510,10 @@
             const tbody = document.getElementById('supplies-table-body');
             tbody.innerHTML = '';
             
-            // Separar especiales y ordenar
             const specials = supplies.filter(s => SPECIAL_VARS.includes(s.nombre));
-            const others = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre))
-                                   .sort((a,b) => a.nombre.localeCompare(b.nombre));
+            const others = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre)).sort((a,b) => a.nombre.localeCompare(b.nombre));
             const sorted = [...specials, ...others];
 
-            // Calcular fijo para mostrar
             const fixed = supplies.filter(s => !SPECIAL_VARS.includes(s.nombre))
                 .reduce((sum, item) => sum + (item.cantidad > 0 ? item.precioTotal / item.cantidad : 0), 0);
             document.getElementById('supplies-fixed-display').innerText = `$${fixed.toFixed(2)}`;
@@ -568,8 +521,7 @@
             sorted.forEach(item => {
                 const isSpecial = SPECIAL_VARS.includes(item.nombre);
                 const unitCost = item.cantidad > 0 ? item.precioTotal / item.cantidad : 0;
-                const originalIndex = supplies.indexOf(item); // Key for editing
-
+                const originalIndex = supplies.indexOf(item); 
                 const tr = document.createElement('tr');
                 tr.className = `group hover:bg-slate-50 transition-colors ${isSpecial ? 'bg-amber-50/30' : ''}`;
                 tr.innerHTML = `
@@ -592,7 +544,7 @@
                 tbody.appendChild(tr);
             });
             lucide.createIcons();
-            calculate(); // Recalcular totales generales si cambiaron precios
+            calculate();
         }
 
         function handleFormSubmit(e) {
@@ -603,17 +555,14 @@
             const index = parseInt(document.getElementById('edit-index').value);
 
             if (index >= 0) {
-                // Edit
                 if (SPECIAL_VARS.includes(supplies[index].nombre)) {
                     supplies[index] = { ...supplies[index], precioTotal: price, cantidad: qty };
                 } else {
                     supplies[index] = { nombre: name, precioTotal: price, cantidad: qty };
                 }
             } else {
-                // Create
                 supplies.push({ nombre: name, precioTotal: price, cantidad: qty });
             }
-
             localStorage.setItem('inkcost_supplies', JSON.stringify(supplies));
             resetForm();
             renderSuppliesTable();
@@ -626,7 +575,6 @@
             document.getElementById('frm-price').value = item.precioTotal;
             document.getElementById('frm-quantity').value = item.cantidad;
             document.getElementById('edit-index').value = index;
-            
             document.getElementById('form-title').innerText = "Editar Insumo";
             document.getElementById('btn-submit').innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios`;
             document.getElementById('btn-submit').classList.remove('bg-slate-800');
@@ -658,6 +606,17 @@
             lucide.createIcons();
         }
 
+        // --- EXPORTAR / IMPORTAR CORREGIDO ---
+        function exportJSON() {
+            const jsonString = JSON.stringify(supplies, null, 2);
+            const blob = new Blob([jsonString], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "respaldo_inkcost.json";
+            a.click();
+        }
+
         function exportCSV() {
             const headers = ["Nombre", "Precio Total", "Cantidad", "Costo Unitario"];
             const rows = supplies.map(i => `"${i.nombre}",${i.precioTotal},${i.cantidad},${(i.cantidad>0?i.precioTotal/i.cantidad:0).toFixed(4)}`);
@@ -676,50 +635,43 @@
                 try {
                     const data = JSON.parse(ev.target.result);
                     if(Array.isArray(data)) {
-                        supplies = data;
-                        localStorage.setItem('inkcost_supplies', JSON.stringify(supplies));
-                        renderSuppliesTable();
-                        alert('Importado correctamente');
+                        const valid = data.every(i => 'nombre' in i && 'precioTotal' in i && 'cantidad' in i);
+                        if (valid) {
+                            supplies = data;
+                            localStorage.setItem('inkcost_supplies', JSON.stringify(supplies));
+                            renderSuppliesTable();
+                            alert('¡Respaldo restaurado correctamente!');
+                        } else {
+                            alert('El archivo JSON no tiene el formato correcto.');
+                        }
                     }
-                } catch(err) { alert('Error archivo invalido'); }
+                } catch(err) { alert('Error: Archivo inválido.'); }
             };
             r.readAsText(file);
         }
 
-        // --- REPORTE ---
         function openReport() {
             const min = parseFloat(document.getElementById('inp-minutes').value) || 0;
             const rate = parseFloat(document.getElementById('inp-hourly-rate').value) || 0;
-            
-            // Update Report DOM
             document.getElementById('report-date').innerText = new Date().toLocaleDateString();
             document.getElementById('rep-fixed').innerText = document.getElementById('display-fixed').innerText;
-            
             document.getElementById('rep-time-detail').innerText = `${min} min @ $${rate}/hr`;
             document.getElementById('rep-time-cost').innerText = document.getElementById('display-time').innerText;
-
             const qTin = document.getElementById('inp-tinta').value;
             const qAgu = document.getElementById('inp-agujas').value;
-            // Tetinas implícitas
             document.getElementById('rep-vars-detail').innerText = `Tinta/Tetinas: ${qTin} dosis, Agujas: ${qAgu}`;
             document.getElementById('rep-vars-cost').innerText = document.getElementById('display-variable').innerText;
-
             const taxP = document.getElementById('inp-tax-percent').value;
             document.getElementById('rep-tax-detail').innerText = `${taxP}%`;
             document.getElementById('rep-tax-cost').innerText = document.getElementById('display-tax-amt').innerText;
-
             document.getElementById('rep-subtotal').innerText = document.getElementById('display-subtotal').innerText;
             document.getElementById('rep-total').innerText = document.getElementById('display-total').innerText;
-            
             const badgeVisible = !document.getElementById('badge-min-cost').classList.contains('hidden');
-            if(badgeVisible) document.getElementById('rep-min-row').classList.remove('hidden');
-            else document.getElementById('rep-min-row').classList.add('hidden');
-
+            if(badgeVisible) document.getElementById('rep-min-row').classList.remove('hidden'); else document.getElementById('rep-min-row').classList.add('hidden');
             document.getElementById('report-modal').classList.remove('hidden');
         }
 
         function closeModal(e) {
-            // Si viene del evento de click en background, verificar target
             if (e && e.target !== e.currentTarget && e.target.closest('#report-content')) return;
             document.getElementById('report-modal').classList.add('hidden');
         }
